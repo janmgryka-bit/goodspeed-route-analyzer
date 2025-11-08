@@ -28,6 +28,20 @@ pip install -r requirements.txt
 pip install kivy-garden.mapview
 ```
 
+### Konfiguracja kluczy API
+1. Skopiuj plik `.env.example` do `.env`:
+```bash
+cp .env.example .env
+```
+
+2. Edytuj plik `.env` i uzupełnij swoje klucze API:
+```bash
+GEMINI_API_KEY=twoj_klucz_gemini
+GOOGLE_MAPS_API_KEY=twoj_klucz_google_maps
+```
+
+**⚠️ Ważne:** Plik `.env` jest w `.gitignore` i nie będzie commitowany do repozytorium.
+
 ### Uruchomienie aplikacji webowej
 ```bash
 streamlit run goodspeed_cloud_mapper.py

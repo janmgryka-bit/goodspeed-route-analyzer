@@ -110,7 +110,21 @@ def upload_and_extract_video(video_file, progress_callback=None):
             progress_callback("🤖 Ekstrakcja adresów z wideo przez Gemini AI...")
         
         # Krok 2: Prompt dla Gemini - TYLKO ekstrakcja adresów w formacie JSON
-        prompt = """To jest wideo, na którym przewijam listę 63 adresów dostaw w kolejności. Twoim zadaniem jest wyodrębnienie **KAŻDEGO unikalnego adresu dostawy**, zachowując ich kolejność. Zastosuj logikę: **adres (ulica i numer) ma bezwzględny priorytet nad kodem pocztowym**. Kod pocztowy użyj tylko do rozstrzygnięcia konfliktu nazwy ulicy (np. Rembertów vs. Wesoła). Zignoruj godziny i nazwy firm.
+        prompt = """To jest wideo, na którym przewijam listę adresów dostaw w kolejności. Twoim zadaniem jest wyodrębnienie **KAŻDEGO unikalnego adresu dostawy**, zachowując ich kolejność. 
+
+**WAŻNE - Format adresu:**
+- Zawsze wyodrębniaj pełny adres w formacie: "Ulica Numer, Miasto/Dzielnica, Kod Pocztowy"
+- Przykład: "Ul. Wesoła 15, Wesoła, 05-075" lub "Ul. Wesoła 15, Warszawa, 00-123"
+- **Kod pocztowy jest KLUCZOWY** do rozróżnienia ulic o tej samej nazwie w różnych miastach/dzielnicach
+- Jeśli widzisz kod pocztowy, ZAWSZE go dołącz do adresu
+- Jeśli nie ma kodu pocztowego, ale jest nazwa miasta/dzielnicy (np. "Wesoła", "Rembertów"), dołącz ją
+
+**Priorytety:**
+1. Ulica + Numer (obowiązkowe)
+2. Miasto/Dzielnica (jeśli widoczne)
+3. Kod pocztowy (jeśli widoczny - KLUCZOWY dla rozróżnienia)
+
+Zignoruj godziny i nazwy firm.
 
 Zwróć wynik w czystym formacie JSON (bez dodatkowych komentarzy) jako listę 63 obiektów, zawierających wyłącznie pełny, poprawny adres:
 
@@ -229,13 +243,82 @@ Zwróć TYLKO JSON, bez dodatkowych komentarzy przed lub po JSON."""
             os.unlink(video_path)
 
 
+def extract_postal_code(address):
+    """
+    Wyodrębnia kod pocztowy z adresu (format: XX-XXX).
+    
+    Args:
+        address: Adres tekstowy
+        
+    Returns:
+        Kod pocztowy (string) lub None
+    """
+    # Wzorzec dla polskiego kodu pocztowego: XX-XXX
+    postal_pattern = r'\b\d{2}-\d{3}\b'
+    match = re.search(postal_pattern, address)
+    if match:
+        return match.group(0)
+    return None
+
+
+def extract_city_name(address):
+    """
+    Wyodrębnia nazwę miasta/dzielnicy z adresu.
+    Szuka typowych nazw: Warszawa, Wesoła, Rembertów, itp.
+    Priorytet: szuka nazwy miasta PO przecinku (format: "Ulica, Miasto").
+    
+    Args:
+        address: Adres tekstowy
+        
+    Returns:
+        Nazwa miasta/dzielnicy (string) lub None
+    """
+    address_lower = address.lower()
+    
+    # Najpierw sprawdź, czy jest przecinek - miasto zwykle jest po przecinku
+    if ',' in address:
+        parts = address.split(',')
+        # Sprawdź części po pierwszym przecinku (miasto zwykle jest w drugiej lub trzeciej części)
+        for part in parts[1:]:
+            part_clean = part.strip().lower()
+            # Lista typowych miast/dzielnic w okolicach Warszawy
+            cities = ['wesoła', 'wesola', 'rembertów', 'rembertow', 'wawer', 'warszawa', 'warszawie']
+            
+            for city in cities:
+                if city in part_clean:
+                    return city
+    
+    # Fallback: jeśli nie ma przecinka, szukaj w całym adresie
+    # Ale unikaj sytuacji, gdzie nazwa ulicy zawiera nazwę miasta (np. "ul. Wesoła" w Warszawie)
+    cities = ['warszawa', 'warszawie', 'wesoła', 'wesola', 'rembertów', 'rembertow', 'wawer']
+    
+    # Priorytet dla "Warszawa" - jeśli jest w adresie, prawdopodobnie to miasto
+    if 'warszawa' in address_lower or 'warszawie' in address_lower:
+        return 'warszawa'
+    
+    # Dla innych miast, sprawdź czy nie są tylko w nazwie ulicy
+    for city in ['wesoła', 'wesola', 'rembertów', 'rembertow']:
+        if city in address_lower:
+            # Sprawdź, czy to nie jest tylko w nazwie ulicy (np. "ul. Wesoła")
+            # Jeśli przed nazwą miasta jest przecinek lub kod pocztowy, to prawdopodobnie to miasto
+            city_index = address_lower.find(city)
+            if city_index > 0:
+                before_city = address_lower[:city_index].strip()
+                # Jeśli przed nazwą miasta jest przecinek lub kod pocztowy, to prawdopodobnie to miasto
+                if ',' in before_city or re.search(r'\d{2}-\d{3}', before_city):
+                    return city
+    
+    return None
+
+
 def geocode_address_google(address):
     """
     Konwertuje adres na współrzędne lat/lon używając Google Maps Geocoding API.
-    Najdokładniejsze geokodowanie dostępne.
+    Wykorzystuje kod pocztowy i nazwę miasta do rozróżnienia ulic o tej samej nazwie 
+    w różnych miastach/dzielnicach (np. ul. Wesoła w Wesołej vs ul. Wesoła w Warszawie).
     
     Args:
-        address: Adres do geokodowania
+        address: Adres do geokodowania (może zawierać kod pocztowy i nazwę miasta)
         
     Returns:
         Tuple (latitude, longitude) lub None
@@ -244,15 +327,95 @@ def geocode_address_google(address):
         return None
     
     try:
-        # Dodajemy 'Polska' dla lepszej precyzji w kontekście
-        address_query = f"{address}, Polska"
+        # Wyodrębnij kod pocztowy i nazwę miasta z adresu
+        postal_code = extract_postal_code(address)
+        city_name = extract_city_name(address)
+        
+        # Przygotuj zapytanie - kod pocztowy ma najwyższy priorytet
+        if postal_code:
+            # Jeśli mamy kod pocztowy, użyj go w zapytaniu
+            address_query = f"{address}, Polska"
+        else:
+            # Jeśli nie ma kodu, ale jest nazwa miasta, użyj jej
+            address_query = f"{address}, Polska"
         
         # Wywołanie API
         geocode_result = gmaps.geocode(address_query)
         
         if geocode_result:
-            # Bierzemy pierwszy, najbardziej precyzyjny wynik
-            location = geocode_result[0]['geometry']['location']
+            # Jeśli mamy kod pocztowy, zweryfikuj wyniki i znajdź pasujący
+            if postal_code:
+                for result in geocode_result:
+                    address_components = result.get('address_components', [])
+                    result_postal_code = None
+                    result_city = None
+                    
+                    for component in address_components:
+                        types = component.get('types', [])
+                        if 'postal_code' in types:
+                            result_postal_code = component.get('long_name', '')
+                        if 'locality' in types or 'sublocality' in types or 'sublocality_level_1' in types:
+                            result_city = component.get('long_name', '').lower()
+                    
+                    # Priorytet: kod pocztowy musi się zgadzać
+                    if result_postal_code == postal_code:
+                        location = result['geometry']['location']
+                        return (location['lat'], location['lng'])
+                    
+                    # Jeśli kod nie pasuje, ale mamy nazwę miasta, sprawdź czy miasto pasuje
+                    if city_name and result_city:
+                        if city_name in result_city or result_city in city_name:
+                            # Jeśli kod pocztowy zaczyna się od odpowiedniego prefiksu dla miasta
+                            # (np. 05-XXX dla Wesołej, 00-XXX dla Warszawy)
+                            if city_name in ['wesoła', 'wesola'] and postal_code.startswith('05'):
+                                location = result['geometry']['location']
+                                return (location['lat'], location['lng'])
+                            elif city_name == 'warszawa' and postal_code.startswith('00'):
+                                location = result['geometry']['location']
+                                return (location['lat'], location['lng'])
+            
+            # Jeśli mamy nazwę miasta, ale nie kod pocztowy, sprawdź wyniki
+            elif city_name:
+                for result in geocode_result:
+                    address_components = result.get('address_components', [])
+                    result_city = None
+                    
+                    for component in address_components:
+                        types = component.get('types', [])
+                        if 'locality' in types or 'sublocality' in types or 'sublocality_level_1' in types:
+                            result_city = component.get('long_name', '').lower()
+                    
+                    # Sprawdź, czy miasto w wyniku pasuje do miasta w adresie
+                    if result_city and (city_name in result_city or result_city in city_name):
+                        location = result['geometry']['location']
+                        return (location['lat'], location['lng'])
+            
+            # Fallback: użyj pierwszego wyniku, ale sprawdź czy nie jest oczywistym błędem
+            first_result = geocode_result[0]
+            address_components = first_result.get('address_components', [])
+            
+            # Jeśli adres zawiera "Wesoła" ale wynik wskazuje na Warszawę (bez dzielnicy Wesoła), szukaj dalej
+            if city_name and city_name in ['wesoła', 'wesola']:
+                first_city = None
+                for component in address_components:
+                    types = component.get('types', [])
+                    if 'locality' in types or 'sublocality' in types:
+                        first_city = component.get('long_name', '').lower()
+                
+                # Jeśli pierwszy wynik to Warszawa, ale szukamy Wesołej, sprawdź inne wyniki
+                if first_city == 'warszawa' or (first_city and 'wesoła' not in first_city and 'wesola' not in first_city):
+                    for result in geocode_result[1:]:
+                        result_components = result.get('address_components', [])
+                        for component in result_components:
+                            types = component.get('types', [])
+                            if 'locality' in types or 'sublocality' in types or 'sublocality_level_1' in types:
+                                result_city = component.get('long_name', '').lower()
+                                if 'wesoła' in result_city or 'wesola' in result_city:
+                                    location = result['geometry']['location']
+                                    return (location['lat'], location['lng'])
+            
+            # Użyj pierwszego wyniku jako ostateczny fallback
+            location = first_result['geometry']['location']
             return (location['lat'], location['lng'])
         else:
             return None

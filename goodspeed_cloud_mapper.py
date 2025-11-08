@@ -11,6 +11,13 @@ from folium import plugins
 import route_backend
 from route_backend import haversine_distance
 
+# Ładowanie zmiennych środowiskowych z pliku .env
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv nie jest wymagany, jeśli zmienne są ustawione w systemie
+
 # Konfiguracja Streamlit
 st.set_page_config(
     page_title="GoodSpeed Cloud Mapper",

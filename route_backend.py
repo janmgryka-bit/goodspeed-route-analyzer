@@ -15,16 +15,25 @@ from math import radians, sin, cos, sqrt, atan2
 # Ładowanie zmiennych środowiskowych z pliku .env
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    load_dotenv()  # Ładuje zmienne z pliku .env w bieżącym katalogu
 except ImportError:
+    print("⚠️ python-dotenv nie jest zainstalowany. Zainstaluj: pip install python-dotenv")
     pass  # python-dotenv nie jest wymagany, jeśli zmienne są ustawione w systemie
 
 # Stałe API - wczytaj z zmiennych środowiskowych
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GOOGLE_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
+# Sprawdź, czy klucze są ustawione
+if not GEMINI_API_KEY:
+    print("⚠️ Ostrzeżenie: GEMINI_API_KEY nie jest ustawiony w zmiennych środowiskowych!")
+    print("   Upewnij się, że plik .env istnieje i zawiera klucz GEMINI_API_KEY")
+
 # Konfiguracja Gemini API
-genai.configure(api_key=GEMINI_API_KEY)
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+else:
+    print("❌ Błąd: Nie można skonfigurować Gemini API - brak klucza!")
 
 # Konfiguracja Google Maps API
 gmaps = googlemaps.Client(key=GOOGLE_API_KEY) if GOOGLE_API_KEY else None

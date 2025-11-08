@@ -18,6 +18,14 @@ Aplikacja do analizy tras dostaw z wideo i zarządzania trasą na urządzeniach 
 - **Plik:** `route_backend.py`
 - Przetwarzanie wideo i ekstrakcja adresów z użyciem Gemini Vision AI
 
+### 4. Modułowa aplikacja do zarządzania trasami
+- **Plik:** `route_optimizer.py`
+- Zarządzanie trasami z obsługą Time Windows
+- Klasa `Order` - reprezentacja punktu dostawy
+- Klasa `RouteManager` - zarządzanie listą zamówień
+- Klasa `RouteOptimizer` - optymalizacja trasy z uwzględnieniem okien czasowych
+- Uruchomienie: `python route_optimizer.py`
+
 ## 🚀 Szybki start
 
 ### Instalacja zależności

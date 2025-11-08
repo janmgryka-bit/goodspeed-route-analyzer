@@ -26,6 +26,19 @@ Aplikacja do analizy tras dostaw z wideo i zarządzania trasą na urządzeniach 
 - Klasa `RouteOptimizer` - optymalizacja trasy z uwzględnieniem okien czasowych
 - Uruchomienie: `python route_optimizer.py`
 
+### 5. VRPTW Manager (Vehicle Routing Problem with Time Windows)
+- **Plik:** `vrptw_manager.py`
+- Zaawansowana aplikacja do zarządzania trasami z wizualizacją folium
+- **GoogleMapsIntegration** - symulacja Google Distance Matrix API (macierz czasów przejazdu)
+- **RouteOptimizer** - optymalizacja VRPTW z priorytetem dla limitów czasowych
+- **RouteManager** - zarządzanie trasą z metodami: `move_order`, `mark_order_as_delivered`, `re_optimize`
+- **MapVisualizer** - interaktywne mapy folium z kolorowaniem markerów:
+  - 🟢 Zielony: Dostarczone
+  - 🔴 Czerwony: Pilne (z limitem czasowym)
+  - 🔵 Niebieski: Oczekujące
+- Uruchomienie: `python vrptw_manager.py`
+- Generuje pliki HTML z mapami: `route_map_initial.html`, `route_map_after_reorder.html`, `route_map_final.html`
+
 ## 🚀 Szybki start
 
 ### Instalacja zależności

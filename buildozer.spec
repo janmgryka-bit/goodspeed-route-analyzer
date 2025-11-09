@@ -24,7 +24,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy==2.1.0,plyer,kivy-garden.mapview,importlib
+requirements = python3,kivy==2.1.0,plyer,kivy-garden.mapview
 
 # (str) Custom source folders for requirements
 # requirements.source.kivy = ../../kivy
@@ -129,7 +129,7 @@ android.allow_backup = True
 #
 
 # (str) The directory in which python-for-android should look for your own build recipes (if any)
-#p4a.local_recipes =
+p4a.local_recipes = recipes
 
 # (str) The directory in which python-for-android should look for your own build modules (if any)
 #p4a.local_modules =

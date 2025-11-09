@@ -1,0 +1,63 @@
+--- a/jnius/jnius_utils.pxi
++++ b/jnius/jnius_utils.pxi
+@@ -318,7 +318,7 @@
+ 
+         if r == 'S' or r == 'I':
+             if isinstance(arg, int) or (
+-                    (isinstance(arg, long) and arg < 2147483648)):
++                    False):  # Python 3: long type doesn't exist, int handles all values
+                 score += 10
+                 continue
+             elif isinstance(arg, float):
+@@ -329,7 +329,7 @@
+                 return -1
+ 
+         if r == 'J':
+-            if isinstance(arg, int) or isinstance(arg, long):
++            if isinstance(arg, int):  # Python 3: long type doesn't exist
+                 score += 10
+                 continue
+             elif isinstance(arg, float):
+--- a/jnius/jnius_conversion.pxi
++++ b/jnius/jnius_conversion.pxi
+@@ -62,7 +62,7 @@
+                 j_args[index].l = NULL
+ 
+             # numeric types
+-            elif isinstance(py_arg, (int, long)):
++            elif isinstance(py_arg, int):  # Python 3: long type doesn't exist
+                 j_args[index].l = convert_python_to_jobject(
+                     j_env, 'Ljava/lang/Integer;', py_arg
+                 )
+@@ -479,7 +479,7 @@
+             return convert_pystr_to_java(j_env, to_unicode(obj))
+ 
+         # numeric types
+-        elif isinstance(obj, (int, long)) and \
++        elif isinstance(obj, int) and \
+                 definition in (
+                     'Ljava/lang/Integer;',
+                     'Ljava/lang/Number;',
+@@ -537,11 +536,10 @@
+                    'argument. Want {0!r}, got {1!r}'.format(
+                        definition[1:-1], obj))
+
+     elif definition[0] == '[':
+        conversions = {
+            int: 'I',
+            bool: 'Z',
+-            long: 'J',
+            float: 'F',
+            unicode: 'Ljava/lang/String;',
+            bytes: 'B'
+@@ -638,8 +637,7 @@
+     if definition == 'Ljava/lang/Object;' and len(pyarray) > 0:
+         # then the method will accept any array type as param
+         # let's be as precise as we can
+         conversions = {
+             int: 'I',
+             bool: 'Z',
+-            long: 'J',
+             float: 'F',
+             bytes: 'B',
+             str: 'Ljava/lang/String;',

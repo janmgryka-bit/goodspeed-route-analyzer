@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_55cd6760cb9a0d297e13c958e18a5ca1 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+    <div style="position: fixed; 
+                bottom: 50px; left: 50px; width: 200px; height: 120px; 
+                background-color: white; border:2px solid grey; z-index:9999; 
+                font-size:14px; padding: 10px">
+    <h4>Legenda</h4>
+    <p><i class="fa fa-check-circle" style="color:green"></i> Dostarczone</p>
+    <p><i class="fa fa-exclamation-circle" style="color:red"></i> Pilne (Limit czasowy)</p>
+    <p><i class="fa fa-info-circle" style="color:blue"></i> Oczekujące</p>
+    </div>
+    
+    
+            <div class="folium-map" id="map_55cd6760cb9a0d297e13c958e18a5ca1" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_55cd6760cb9a0d297e13c958e18a5ca1 = L.map(
+                "map_55cd6760cb9a0d297e13c958e18a5ca1",
+                {
+                    center: [52.23263764011411, 21.014121221904073],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 13,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_624654a1b72e27cc9388f70eb85c33c7 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_624654a1b72e27cc9388f70eb85c33c7.addTo(map_55cd6760cb9a0d297e13c958e18a5ca1);
+        
+    
+            var marker_369f784555226241a73a399af2b60a65 = L.marker(
+                [52.245988410259045, 21.007773653393638],
+                {
+}
+            ).addTo(map_55cd6760cb9a0d297e13c958e18a5ca1);
+        
+    
+            var icon_d1698a5f2a549276023537509294df20 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "exclamation-circle",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ad5b05d1086e9e25991dab3c2d991422 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_88cd5d55a468c42d7d86677587cfd817 = $(`<div id="html_88cd5d55a468c42d7d86677587cfd817" style="width: 100.0%; height: 100.0%;">         <b>Zamówienie #1</b><br>         <b>Adres:</b> UL. MARSZAŁKOWSKA 1, Warszawa<br>         <b>Status:</b> ⚠️ PILNE (Limit: 15:00)<br>         <b>Pozycja w trasie:</b> 1/8<br>         <b>Współrzędne:</b> (52.245988, 21.007774)         <br><b>Limit czasowy:</b> 15:00</div>`)[0];
+                popup_ad5b05d1086e9e25991dab3c2d991422.setContent(html_88cd5d55a468c42d7d86677587cfd817);
+            
+        
+
+        marker_369f784555226241a73a399af2b60a65.bindPopup(popup_ad5b05d1086e9e25991dab3c2d991422)
+        ;
+
+        
+    
+    
+            marker_369f784555226241a73a399af2b60a65.bindTooltip(
+                `<div>
+                     Zamówienie #1: UL. MARSZAŁKOWSKA 1, Warszawa...
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_369f784555226241a73a399af2b60a65.setIcon(icon_d1698a5f2a549276023537509294df20);
+            
+    
+            var marker_69f8c5495b59ee197abdeedd0191d8f2 = L.marker(
+                [52.25634831196001, 20.99821286515895],
+                {
+}
+            ).addTo(map_55cd6760cb9a0d297e13c958e18a5ca1);
+        
+    
+            var icon_7b0996a8be1601d6944998a4e7847f32 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "exclamation-circle",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_05a5d191241999cb88fb4a788cfbd5bc = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_f53c2d9d868fb8caac738c434eb07a2e = $(`<div id="html_f53c2d9d868fb8caac738c434eb07a2e" style="width: 100.0%; height: 100.0%;">         <b>Zamówienie #5</b><br>         <b>Adres:</b> UL. CHMIELNA 73, Warszawa<br>         <b>Status:</b> ⚠️ PILNE (Limit: 18:00)<br>         <b>Pozycja w trasie:</b> 2/8<br>         <b>Współrzędne:</b> (52.256348, 20.998213)         <br><b>Limit czasowy:</b> 18:00</div>`)[0];
+                popup_05a5d191241999cb88fb4a788cfbd5bc.setContent(html_f53c2d9d868fb8caac738c434eb07a2e);
+            
+        
+
+        marker_69f8c5495b59ee197abdeedd0191d8f2.bindPopup(popup_05a5d191241999cb88fb4a788cfbd5bc)
+        ;
+
+        
+    
+    
+            marker_69f8c5495b59ee197abdeedd0191d8f2.bindTooltip(
+                `<div>
+                     Zamówienie #5: UL. CHMIELNA 73, Warszawa...
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_69f8c5495b59ee197abdeedd0191d8f2.setIcon(icon_7b0996a8be1601d6944998a4e7847f32);
+            
+    
+            var marker_97d6c3c651de00aad0ec3d0de306b48b = L.marker(
+                [52.23444186583383, 20.998209008752294],
+                {
+}
+            ).addTo(map_55cd6760cb9a0d297e13c958e18a5ca1);
+        
+    
+            var icon_68c17151f73d41b26919a2ae48e2573d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "exclamation-circle",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6376324ee2feff7c53a08bab5c8bd4f3 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_1730dead8d13a7457cee4d23981677c3 = $(`<div id="html_1730dead8d13a7457cee4d23981677c3" style="width: 100.0%; height: 100.0%;">         <b>Zamówienie #3</b><br>         <b>Adres:</b> PL. ZAMKOWY 1, Warszawa<br>         <b>Status:</b> ⚠️ PILNE (Limit: 17:00)<br>         <b>Pozycja w trasie:</b> 3/8<br>         <b>Współrzędne:</b> (52.234442, 20.998209)         <br><b>Limit czasowy:</b> 17:00</div>`)[0];
+                popup_6376324ee2feff7c53a08bab5c8bd4f3.setContent(html_1730dead8d13a7457cee4d23981677c3);
+            
+        
+
+        marker_97d6c3c651de00aad0ec3d0de306b48b.bindPopup(popup_6376324ee2feff7c53a08bab5c8bd4f3)
+        ;
+
+        
+    
+    
+            marker_97d6c3c651de00aad0ec3d0de306b48b.bindTooltip(
+                `<div>
+                     Zamówienie #3: PL. ZAMKOWY 1, Warszawa...
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_97d6c3c651de00aad0ec3d0de306b48b.setIcon(icon_68c17151f73d41b26919a2ae48e2573d);
+            
+    
+            var marker_8931d16a1efe3e5368ab74b7a946a26c = L.marker(
+                [52.20877576592221, 20.995831451872384],
+                {
+}
+            ).addTo(map_55cd6760cb9a0d297e13c958e18a5ca1);
+        
+    
+            var icon_a770fbe12969ba82f8bf3145b55669d1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-circle",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1a6f2d1e50d4ceaa821406f53b6ae672 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_99ef7d5a4ff14805773a7c8f68027a94 = $(`<div id="html_99ef7d5a4ff14805773a7c8f68027a94" style="width: 100.0%; height: 100.0%;">         <b>Zamówienie #6</b><br>         <b>Adres:</b> UL. ŚWIĘTOKRZYSKA 31, Warszawa<br>         <b>Status:</b> ⏳ OCZEKUJĄCE<br>         <b>Pozycja w trasie:</b> 4/8<br>         <b>Współrzędne:</b> (52.208776, 20.995831)         </div>`)[0];
+                popup_1a6f2d1e50d4ceaa821406f53b6ae672.setContent(html_99ef7d5a4ff14805773a7c8f68027a94);
+            
+        
+
+        marker_8931d16a1efe3e5368ab74b7a946a26c.bindPopup(popup_1a6f2d1e50d4ceaa821406f53b6ae672)
+        ;
+
+        
+    
+    
+            marker_8931d16a1efe3e5368ab74b7a946a26c.bindTooltip(
+                `<div>
+                     Zamówienie #6: UL. ŚWIĘTOKRZYSKA 31, Warszawa...
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_8931d16a1efe3e5368ab74b7a946a26c.setIcon(icon_a770fbe12969ba82f8bf3145b55669d1);
+            
+    
+            var marker_a3aaa0bbbc0fab51ab0124ea99c7b289 = L.marker(
+                [52.202464126908474, 21.00870620638782],
+                {
+}
+            ).addTo(map_55cd6760cb9a0d297e13c958e18a5ca1);
+        
+    
+            var icon_1ea820e728668b757d58bd13e5b339e4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-circle",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6247a53d51325b99d9a7e58196860d70 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_98a63ba2a6f268090806d87d423ae116 = $(`<div id="html_98a63ba2a6f268090806d87d423ae116" style="width: 100.0%; height: 100.0%;">         <b>Zamówienie #4</b><br>         <b>Adres:</b> UL. KRAKOWSKIE PRZEDMIEŚCIE 26/28, Warszawa<br>         <b>Status:</b> ⏳ OCZEKUJĄCE<br>         <b>Pozycja w trasie:</b> 5/8<br>         <b>Współrzędne:</b> (52.202464, 21.008706)         </div>`)[0];
+                popup_6247a53d51325b99d9a7e58196860d70.setContent(html_98a63ba2a6f268090806d87d423ae116);
+            
+        
+
+        marker_a3aaa0bbbc0fab51ab0124ea99c7b289.bindPopup(popup_6247a53d51325b99d9a7e58196860d70)
+        ;
+
+        
+    
+    
+            marker_a3aaa0bbbc0fab51ab0124ea99c7b289.bindTooltip(
+                `<div>
+                     Zamówienie #4: UL. KRAKOWSKIE PRZEDMIEŚCIE 26...
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a3aaa0bbbc0fab51ab0124ea99c7b289.setIcon(icon_1ea820e728668b757d58bd13e5b339e4);
+            
+    
+            var marker_90a8d0d43145831d8d253ef9afce95d0 = L.marker(
+                [52.2512661561502, 21.02973652821459],
+                {
+}
+            ).addTo(map_55cd6760cb9a0d297e13c958e18a5ca1);
+        
+    
+            var icon_b964beb5d2929e10836369d17f2967f1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "exclamation-circle",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4ad3d6ef48a0d0e14654b0429885cbfe = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ca4557487b9928806730598b7bc189e4 = $(`<div id="html_ca4557487b9928806730598b7bc189e4" style="width: 100.0%; height: 100.0%;">         <b>Zamówienie #2</b><br>         <b>Adres:</b> UL. NOWY ŚWIAT 15, Warszawa<br>         <b>Status:</b> ⚠️ PILNE (Limit: 15:00)<br>         <b>Pozycja w trasie:</b> 6/8<br>         <b>Współrzędne:</b> (52.251266, 21.029737)         <br><b>Limit czasowy:</b> 15:00</div>`)[0];
+                popup_4ad3d6ef48a0d0e14654b0429885cbfe.setContent(html_ca4557487b9928806730598b7bc189e4);
+            
+        
+
+        marker_90a8d0d43145831d8d253ef9afce95d0.bindPopup(popup_4ad3d6ef48a0d0e14654b0429885cbfe)
+        ;
+
+        
+    
+    
+            marker_90a8d0d43145831d8d253ef9afce95d0.bindTooltip(
+                `<div>
+                     Zamówienie #2: UL. NOWY ŚWIAT 15, Warszawa...
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_90a8d0d43145831d8d253ef9afce95d0.setIcon(icon_b964beb5d2929e10836369d17f2967f1);
+            
+    
+            var marker_ccb43ca13def6cfaf2180c2678498690 = L.marker(
+                [52.23971813226436, 21.04101293100698],
+                {
+}
+            ).addTo(map_55cd6760cb9a0d297e13c958e18a5ca1);
+        
+    
+            var icon_f8c87c01189e8e99d84b6b0504333392 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-circle",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f1d24c981e2c27e9a2c76797a8bced2f = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_a25985ffc0cf6b1844dfcf7b1f6023bf = $(`<div id="html_a25985ffc0cf6b1844dfcf7b1f6023bf" style="width: 100.0%; height: 100.0%;">         <b>Zamówienie #8</b><br>         <b>Adres:</b> UL. PIĘKNA 20, Warszawa<br>         <b>Status:</b> ⏳ OCZEKUJĄCE<br>         <b>Pozycja w trasie:</b> 7/8<br>         <b>Współrzędne:</b> (52.239718, 21.041013)         </div>`)[0];
+                popup_f1d24c981e2c27e9a2c76797a8bced2f.setContent(html_a25985ffc0cf6b1844dfcf7b1f6023bf);
+            
+        
+
+        marker_ccb43ca13def6cfaf2180c2678498690.bindPopup(popup_f1d24c981e2c27e9a2c76797a8bced2f)
+        ;
+
+        
+    
+    
+            marker_ccb43ca13def6cfaf2180c2678498690.bindTooltip(
+                `<div>
+                     Zamówienie #8: UL. PIĘKNA 20, Warszawa...
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ccb43ca13def6cfaf2180c2678498690.setIcon(icon_f8c87c01189e8e99d84b6b0504333392);
+            
+    
+            var marker_bdaf263352061f0cade5e96862e26680 = L.marker(
+                [52.22209835161479, 21.03348713044594],
+                {
+}
+            ).addTo(map_55cd6760cb9a0d297e13c958e18a5ca1);
+        
+    
+            var icon_897f2a196165ef8308d68f888f4e5b8f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "exclamation-circle",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_39854dea13cbd925be227fb0a039b656 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_8b48c3d6db55aec24b41692f09490bca = $(`<div id="html_8b48c3d6db55aec24b41692f09490bca" style="width: 100.0%; height: 100.0%;">         <b>Zamówienie #7</b><br>         <b>Adres:</b> UL. JANA PAWŁA II 27, Warszawa<br>         <b>Status:</b> ⚠️ PILNE (Limit: 16:00)<br>         <b>Pozycja w trasie:</b> 8/8<br>         <b>Współrzędne:</b> (52.222098, 21.033487)         <br><b>Limit czasowy:</b> 16:00</div>`)[0];
+                popup_39854dea13cbd925be227fb0a039b656.setContent(html_8b48c3d6db55aec24b41692f09490bca);
+            
+        
+
+        marker_bdaf263352061f0cade5e96862e26680.bindPopup(popup_39854dea13cbd925be227fb0a039b656)
+        ;
+
+        
+    
+    
+            marker_bdaf263352061f0cade5e96862e26680.bindTooltip(
+                `<div>
+                     Zamówienie #7: UL. JANA PAWŁA II 27, Warszawa...
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_bdaf263352061f0cade5e96862e26680.setIcon(icon_897f2a196165ef8308d68f888f4e5b8f);
+            
+    
+            var poly_line_e37a25b948ff268b0ec6246c70763d65 = L.polyline(
+                [[52.245988410259045, 21.007773653393638], [52.25634831196001, 20.99821286515895], [52.23444186583383, 20.998209008752294], [52.20877576592221, 20.995831451872384], [52.202464126908474, 21.00870620638782], [52.2512661561502, 21.02973652821459], [52.23971813226436, 21.04101293100698], [52.22209835161479, 21.03348713044594]],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "blue", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.7, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_55cd6760cb9a0d297e13c958e18a5ca1);
+        
+    
+        var popup_33417e854431d1c20e6096062e480fa0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_31c764c9907687e0f5d12bd4042bfd20 = $(`<div id="html_31c764c9907687e0f5d12bd4042bfd20" style="width: 100.0%; height: 100.0%;">Trasa: 8 punktów</div>`)[0];
+                popup_33417e854431d1c20e6096062e480fa0.setContent(html_31c764c9907687e0f5d12bd4042bfd20);
+            
+        
+
+        poly_line_e37a25b948ff268b0ec6246c70763d65.bindPopup(popup_33417e854431d1c20e6096062e480fa0)
+        ;
+
+        
+    
+</script>
+</html>
